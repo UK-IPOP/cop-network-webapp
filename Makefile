@@ -2,4 +2,4 @@
 
 run:
 	@echo "Starting Dash app..."
-	@python app/main.py
+	@python main.py

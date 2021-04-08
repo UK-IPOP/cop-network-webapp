@@ -11,8 +11,7 @@ import csv
 import dash_bootstrap_components as dbc
 import scholar_network
 
-import graphing
-import utils
+from app import graphing, utils
 
 
 # TODO: performance improvements
