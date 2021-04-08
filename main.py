@@ -17,7 +17,6 @@ from app import graphing, utils
 # TODO: performance improvements
 
 
-@lru_cache()
 def load_scholar_names() -> list[str]:
     with open("data/COPscholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
@@ -27,7 +26,6 @@ def load_scholar_names() -> list[str]:
     return authors
 
 
-@lru_cache()
 def create_cop_network_graph_figure():
     graph, positions = utils.load_graph_from_files()
     node_trace, edge_trace = graphing.build_network(graph, positions)
@@ -35,7 +33,6 @@ def create_cop_network_graph_figure():
     return fig
 
 
-@lru_cache()
 def pair_graph(author1, author2):
     custom_graph = scholar_network.build_graph(author1, author2)
 
