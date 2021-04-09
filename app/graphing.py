@@ -2,7 +2,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import networkx as nx
 
-pio.templates.default = "simple_white"
+pio.templates.default = "presentation"
 
 
 def build_network(
