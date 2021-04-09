@@ -17,14 +17,13 @@ from app import graphing, utils
 # TODO: performance improvements
 
 
-def load_scholar_names() -> list[str]:
+def load_scholar_names_from_file() -> list[str]:
     with open("data/COPscholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
         authors = []
         for row in csvreader:
             authors.append(row.get("Name"))
     return authors
-
 
 def create_cop_network_graph_figure():
     graph, positions = utils.load_graph_from_files()
@@ -49,29 +48,47 @@ def pair_graph(author1, author2):
     )
     return fig
 
+def parse_name(name: str) -> str:
+    parts = name.split()
+    parsed = f"{parts[0]} {parts[-1]}"
+    return parsed
+
 
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
-app = dash.Dash("COP Scholar Network Dashboard", external_stylesheets=[theme])
+app = dash.Dash(__name__, title="COP Scholar Network Dashboard", external_stylesheets=[dbc.themes.CERULEAN])
 server = app.server
 
-scholar_names = load_scholar_names()
+scholar_names = load_scholar_names_from_file()
 cop_network_graph = create_cop_network_graph_figure()
 
 
 app.layout = dbc.Container(
     [
-        html.Center(html.H1(children="UK COP Network Web App", className="pt-3")),
         dbc.Row(
             [
                 dbc.Col(
                     [
-                        html.Label("Author 1 Select:"),
+                        html.Img(
+                            src="/assets/IPOP-logo.png",
+                            style={'width': '100px'},
+                        )
+                    ],
+                    width=2
+                ),
+                dbc.Col([html.H1(children="UK COP Network Web App", className="text-info")], width=6),
+            ],
+            className="pt-3 py-3",
+            justify="center",
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Author 1 Select:", className="text-info"),
                         dcc.Dropdown(
                             id="author-dropdown1",
-                            options=[
-                                {"label": person, "value": person}
-                                for person in scholar_names
-                            ],
+                            options=[],
                             value="",
                         ),
                     ],
@@ -79,20 +96,17 @@ app.layout = dbc.Container(
                 ),
                 dbc.Col(
                     [
-                        html.Label("Author 2 Select:"),
+                        html.Label("Author 2 Select:", className="text-info"),
                         dcc.Dropdown(
                             id="author-dropdown2",
-                            options=[
-                                {"label": person, "value": person}
-                                for person in scholar_names
-                            ],
+                            options=[],
                             value="",
                         ),
                     ],
                     width=4,
                 ),
             ],
-            className="py-5",
+            className="py-3",
             justify="center",
             align="center",
         ),
@@ -102,16 +116,20 @@ app.layout = dbc.Container(
                     dbc.Spinner(
                         dcc.Graph(id="network-graph"),
                         type="grow",
-                        color="info",
+                        color="primary",
                         size="lg",
                     ),
                     body=True,
+                    className="p-5 m-5",
+                    style={'box-shadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'},
                 )
             ],
+            className="px-5",
             justify="center",
             align="center",
         ),
-    ]
+    ],
+    fluid=True,
 )
 
 
@@ -121,7 +139,7 @@ app.layout = dbc.Container(
 )
 def update_options1(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": person, "value": person}
+        {"label": parse_name(person), "value": person}
         for person in scholar_names
         if person != input_value
     ]
@@ -133,7 +151,7 @@ def update_options1(input_value: str) -> list[dict[str, str]]:
 )
 def update_options2(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": person, "value": person}
+        {"label": parse_name(person), "value": person}
         for person in scholar_names
         if person != input_value
     ]
