@@ -73,11 +73,21 @@ app.layout = dbc.Container(
                             style={'width': '100px'},
                         )
                     ],
-                    width=2
+                    align="center",
+                    width=2,
                 ),
-                dbc.Col([html.H1(children="UK COP Network Web App", className="text-info")], width=6),
+                dbc.Col([html.H1(children="UK COP Network", className="text-info", style={'text-align': 'center'})], width=4),
+                dbc.Col(
+                    [
+                        html.Img(
+                            src="/assets/UK-COP-logo.jpg",
+                            style={'width': '250px', 'height': '200px'},
+                        )
+                    ],
+                    align="center",
+                    width=2,
+                ),
             ],
-            className="pt-3 py-3",
             justify="center",
             align="center",
         ),
@@ -106,7 +116,6 @@ app.layout = dbc.Container(
                     width=4,
                 ),
             ],
-            className="py-3",
             justify="center",
             align="center",
         ),
@@ -119,8 +128,8 @@ app.layout = dbc.Container(
                         color="primary",
                         size="lg",
                     ),
+                    className="p-3 m-3",
                     body=True,
-                    className="p-5 m-5",
                     style={'box-shadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'},
                 )
             ],
