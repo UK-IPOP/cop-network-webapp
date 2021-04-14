@@ -75,7 +75,7 @@ app.layout = dbc.Container(
                     align="center",
                     width=2,
                 ),
-                dbc.Col([html.H1(children="UK COP Network", className="text-info", style={'text-align': 'center'})], width=4),
+                dbc.Col([html.H1(children="UK COP Scholarship Network", className="text-info", style={'text-align': 'center'})], width=4),
                 dbc.Col(
                     [
                         html.Img(
