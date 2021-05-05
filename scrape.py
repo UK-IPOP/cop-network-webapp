@@ -3,14 +3,15 @@ import csv
 import time
 
 
-def load_scholar_names() -> list[str]:
+def load_scholar_names() -> tuple[list[str], list[str]]:
     with open("data/COPscholars.csv", "r", encoding="utf-8-sig") as f:
         csvreader = csv.DictReader(f)
         authors = []
         ids = []
         for row in csvreader:
-            authors.append(row.get("Name"))
-            ids.append(row.get("ID"))
+            if row.get('Group') == 'Pharmacy Practice and Science':
+                authors.append(row.get("Name"))
+                ids.append(row.get("ID"))
     return authors, ids
 
 
