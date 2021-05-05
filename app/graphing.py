@@ -67,7 +67,7 @@ def build_network(
             size=5,
             colorbar=dict(
                 thickness=15,
-                title="Node Connections",
+                title="Co-authors",
                 xanchor="left",
                 titleside="top",
             ),
