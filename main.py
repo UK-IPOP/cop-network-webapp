@@ -319,7 +319,7 @@ def update_options2(input_value: str) -> list[dict[str, str]]:
 )
 def update_options3(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": person, "value": person}
+        {"label": parse_name(person), "value": person}
         for person in sorted(ipop_names)
         if person != input_value
     ]
@@ -331,7 +331,7 @@ def update_options3(input_value: str) -> list[dict[str, str]]:
 )
 def update_options4(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": person, "value": person}
+        {"label": parse_name(person), "value": person}
         for person in sorted(ipop_names)
         if person != input_value
     ]
