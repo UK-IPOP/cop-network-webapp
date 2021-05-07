@@ -18,20 +18,21 @@ from app import graphing, utils
 
 # TODO: performance improvements
 
-
-def load_scholar_names_from_file(ipop_only: bool = False) -> list[str]:
+def load_scholar_names_from_file() -> list[str]:
     with open("data/COPscholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
         authors = []
-        if ipop_only:
-            for row in csvreader:
-                if row.get('Group') == 'Pharmacy Practice and Science':
-                    authors.append(row.get("Name"))
-            return authors
-        else:
-            for row in csvreader:
-                authors.append(row.get("Name"))
-            return authors
+        for row in csvreader:
+            authors.append(row.get("Name"))
+        return authors
+
+def load_ipop_scholar_names_from_file() -> list[str]:
+    with open("data/IPOP-Scholars.csv", "r") as f:
+        csvreader = csv.DictReader(f)
+        authors = []
+        for row in csvreader:
+            authors.append(row.get("Name"))
+        return authors
 
 def create_cop_network_graph_figure():
     graph, positions = utils.load_graph_from_files()
@@ -72,9 +73,11 @@ def parse_name(name: str) -> str:
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
 app = dash.Dash(__name__, title="COP Scholar Network Dashboard", external_stylesheets=[dbc.themes.CERULEAN])
 server = app.server
+app.config['suppress_callback_exceptions'] = True
+
 
 scholar_names = load_scholar_names_from_file()
-ipop_names = load_scholar_names_from_file(ipop_only=True)
+ipop_names = load_ipop_scholar_names_from_file()
 cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
@@ -316,8 +319,8 @@ def update_options2(input_value: str) -> list[dict[str, str]]:
 )
 def update_options3(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
-        for person in ipop_names
+        {"label": person, "value": person}
+        for person in sorted(ipop_names)
         if person != input_value
     ]
 
@@ -328,8 +331,8 @@ def update_options3(input_value: str) -> list[dict[str, str]]:
 )
 def update_options4(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
-        for person in ipop_names
+        {"label": person, "value": person}
+        for person in sorted(ipop_names)
         if person != input_value
     ]
 
