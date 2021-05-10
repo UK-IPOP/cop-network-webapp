@@ -27,7 +27,7 @@ def build_network(
     edge_trace = go.Scatter(
         x=edge_x,
         y=edge_y,
-        line=dict(width=0.25, color="#D3D3D3"),
+        line=dict(width=0.25, color="#999999"),
         hoverinfo="none",
         mode="lines",
     )
@@ -61,12 +61,12 @@ def build_network(
         hovertemplate="<b>%{hovertext}</b><br>%{customdata}<extra></extra>",
         marker=dict(
             showscale=True,
-            colorscale="ice",
-            reversescale=True,
+            colorscale="PuBu",
+            reversescale=False,
             color=[],
             size=5,
             colorbar=dict(
-                thickness=15,
+                thickness=20,
                 title="Co-authors",
                 xanchor="left",
                 titleside="top",
