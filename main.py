@@ -1,3 +1,4 @@
+from ctypes import util
 from typing import Union
 
 import dash
@@ -49,11 +50,12 @@ def create_ipop_network_graph_figure():
 
 
 def pair_graph(author1, author2):
-    custom_graph = scholar_network.build_graph(author1, author2)
+    graph = scholar_network.build_graph(author1, author2)
 
     # ! time consuming, re-looping over nodes
+    # ! also, try to just filter the pickled graph instead of recreating a new one
     G = nx.Graph()
-    G.add_edges_from(custom_graph.node_pairs())
+    G.add_edges_from(graph.node_pairs())
 
     positions = nx.spring_layout(G)
     node_trace, edge_trace = graphing.build_network(G, positions, author1, author2)
@@ -78,6 +80,7 @@ app.config['suppress_callback_exceptions'] = True
 
 scholar_names = load_scholar_names_from_file()
 ipop_names = load_ipop_scholar_names_from_file()
+all_names = set(scholar_names) | set(ipop_names)
 cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
@@ -295,8 +298,8 @@ app.layout = dbc.Container(
 )
 def update_options1(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
-        for person in scholar_names
+        {"label": person, "value": person}
+        for person in sorted(scholar_names)
         if person != input_value
     ]
 
@@ -307,8 +310,8 @@ def update_options1(input_value: str) -> list[dict[str, str]]:
 )
 def update_options2(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
-        for person in scholar_names
+        {"label": person, "value": person}
+        for person in sorted(scholar_names)
         if person != input_value
     ]
 
@@ -319,7 +322,7 @@ def update_options2(input_value: str) -> list[dict[str, str]]:
 )
 def update_options3(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
+        {"label": person, "value": person}
         for person in sorted(ipop_names)
         if person != input_value
     ]
@@ -331,7 +334,7 @@ def update_options3(input_value: str) -> list[dict[str, str]]:
 )
 def update_options4(input_value: str) -> list[dict[str, str]]:
     return [
-        {"label": parse_name(person), "value": person}
+        {"label": person, "value": person}
         for person in sorted(ipop_names)
         if person != input_value
     ]

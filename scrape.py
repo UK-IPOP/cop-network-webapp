@@ -3,19 +3,24 @@ import csv
 import time
 
 
-def load_scholar_names() -> tuple[list[str], list[str]]:
+def load_scholar_names() -> tuple[set[str], set[str]]:
+    authors = set()
+    ids = set()
     with open("data/IPOP-Scholars.csv", "r", encoding="utf-8-sig") as f:
         csvreader = csv.DictReader(f)
-        authors = []
-        ids = []
         for row in csvreader:
-            authors.append(row.get("Name"))
-            ids.append(row.get("ID"))
+            authors.add(row.get("Name"))
+            ids.add(row.get("ID"))
+    with open("data/COPScholars.csv", "r", encoding="utf-8-sig") as f:
+        csvreader = csv.DictReader(f)
+        for row in csvreader:
+            authors.add(row.get("Name"))
+            ids.add(row.get("ID"))
     return authors, ids
 
 
 authors, ids = load_scholar_names()
 
-for i, author in enumerate(authors):
-    scholar_network.scrape_single_author(ids[i], author)
+for author, id_ in zip(authors, ids):
+    scholar_network.scrape_single_author(id_, author)
     time.sleep(5)
