@@ -622,7 +622,7 @@ jupyter = ["ipywidgets (>=7.5.1,<8.0.0)"]
 
 [[package]]
 name = "scholar-network"
-version = "0.1.9"
+version = "0.1.10"
 description = "Graph Network Analysis for scraping Google Scholar authors."
 category = "main"
 optional = false
@@ -1093,8 +1093,8 @@ rich = [
     {file = "rich-10.1.0.tar.gz", hash = "sha256:8f05431091601888c50341697cfc421dc398ce37b12bca0237388ef9c7e2c9e9"},
 ]
 scholar-network = [
-    {file = "scholar-network-0.1.9.tar.gz", hash = "sha256:33eee8f5dd3296adb5321c50b75a1173c64417e22dd80af309f067c3ffbe5d21"},
-    {file = "scholar_network-0.1.9-py3-none-any.whl", hash = "sha256:52ce19bf1d718ac332676cbb4e721f261a71a0e314568ee20687daec6fca7355"},
+    {file = "scholar-network-0.1.10.tar.gz", hash = "sha256:10d3b50439b2a41e677f5692e258966668bc4fd376bdadd6fde6590448db8666"},
+    {file = "scholar_network-0.1.10-py3-none-any.whl", hash = "sha256:f3f577a60840f6c1d7a131fcb5f0848de5989027d06b4e8eee8e8760b7216bd8"},
 ]
 selenium = [
     {file = "selenium-3.141.0-py2.py3-none-any.whl", hash = "sha256:2d7131d7bc5a5b99a2d9b04aaf2612c411b03b8ca1b1ee8d3de5845a9be2cb3c"},
