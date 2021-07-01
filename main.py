@@ -1,19 +1,14 @@
-from ctypes import util
 from typing import Union
 
 import dash
-from dash_bootstrap_components._components.Col import Col
 import dash_core_components as dcc
 import dash_html_components as html
-from dash_html_components.H2 import H2
-from dash_html_components.Hr import Hr
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import networkx as nx
 import csv
 import dash_bootstrap_components as dbc
 import scholar_network
-import pickle
 
 from app import graphing, utils
 
