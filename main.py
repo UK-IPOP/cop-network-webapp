@@ -13,11 +13,13 @@ import networkx as nx
 import csv
 import dash_bootstrap_components as dbc
 import scholar_network
+import pickle
 
 from app import graphing, utils
 
 
 # TODO: performance improvements
+
 
 def load_scholar_names_from_file() -> list[str]:
     with open("data/COPscholars.csv", "r") as f:
@@ -27,6 +29,7 @@ def load_scholar_names_from_file() -> list[str]:
             authors.append(row.get("Name"))
         return authors
 
+
 def load_ipop_scholar_names_from_file() -> list[str]:
     with open("data/IPOP-Scholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
@@ -34,6 +37,7 @@ def load_ipop_scholar_names_from_file() -> list[str]:
         for row in csvreader:
             authors.append(row.get("Name"))
         return authors
+
 
 def create_cop_network_graph_figure():
     graph, positions = utils.load_graph_from_files()
@@ -51,7 +55,6 @@ def create_ipop_network_graph_figure():
 
 def pair_graph(author1, author2):
     graph = scholar_network.build_graph(author1, author2)
-
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
     G = nx.Graph()
@@ -66,6 +69,7 @@ def pair_graph(author1, author2):
     )
     return fig
 
+
 def parse_name(name: str) -> str:
     parts = name.split()
     parsed = f"{parts[0]} {parts[-1]}"
@@ -73,9 +77,13 @@ def parse_name(name: str) -> str:
 
 
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
-app = dash.Dash(__name__, title="COP Scholar Network Dashboard", external_stylesheets=[dbc.themes.CERULEAN])
+app = dash.Dash(
+    __name__,
+    title="COP Scholar Network Dashboard",
+    external_stylesheets=[dbc.themes.CERULEAN],
+)
 server = app.server
-app.config['suppress_callback_exceptions'] = True
+app.config["suppress_callback_exceptions"] = True
 
 
 scholar_names = load_scholar_names_from_file()
@@ -91,20 +99,25 @@ tab1 = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2('Description:', className='text-center text-info'),
+                        html.H2("Description:", className="text-center text-info"),
                         html.Hr(),
-                        html.P([
-                            "This network graph shows authors and their direct coauthors. "
-                            "When an author is selected you are able to see the author's entire network graph. "
-                            "When you select two authors, you are able to see their combined network(s) and any "
-                            "shared connections they may have. Note that only full graphs for the selected authors "
-                            "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
-                            "entire network. To see their entire network, selected them from the dropdown. If they "
-                            "are not in the dropdown, then you can request to add them, although at this time only "
-                            "COP scholars are included. There are: ",
-                            html.Span(f"{len(scholar_names)} COP ", className='strong text-primary'),
-                            "scholars/authors available to choose from."
-                        ]),
+                        html.P(
+                            [
+                                "This network graph shows authors and their direct coauthors. "
+                                "When an author is selected you are able to see the author's entire network graph. "
+                                "When you select two authors, you are able to see their combined network(s) and any "
+                                "shared connections they may have. Note that only full graphs for the selected authors "
+                                "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
+                                "entire network. To see their entire network, selected them from the dropdown. If they "
+                                "are not in the dropdown, then you can request to add them, although at this time only "
+                                "COP scholars are included. There are: ",
+                                html.Span(
+                                    f"{len(scholar_names)} COP ",
+                                    className="strong text-primary",
+                                ),
+                                "scholars/authors available to choose from.",
+                            ]
+                        ),
                     ],
                     width=9,
                 )
@@ -151,7 +164,9 @@ tab1 = dbc.Container(
                     ),
                     className="p-3 m-3",
                     body=True,
-                    style={'box-shadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'},
+                    style={
+                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+                    },
                 )
             ],
             className="px-5",
@@ -159,31 +174,37 @@ tab1 = dbc.Container(
             align="center",
         ),
     ],
-    fluid=True
+    fluid=True,
 )
 
 
 tab2 = dbc.Container(
     [
-        dbc.Row([
-            dbc.Col(
-                [
-                    html.H2('Description:', className='text-center text-info'),
-                    html.Hr(),
-                    html.P([
-                        "This network graph shows authors and their direct coauthors. "
-                        "When an author is selected you are able to see the author's entire network graph. "
-                        "When you select two authors, you are able to see their combined network(s) and any "
-                        "shared connections they may have. Note that only full graphs for the selected authors "
-                        "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
-                        "entire network. To see their entire network, selected them from the dropdown. If they "
-                        "are not in the dropdown, then you can request to add them, although at this time only "
-                        "COP scholars are included. There are: ",
-                        html.Span(f"{len(ipop_names)} IPOP ", className='strong text-primary'),
-                        "scholars/authors available to choose from."
-                    ]),
-                ],
-                width=9,
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H2("Description:", className="text-center text-info"),
+                        html.Hr(),
+                        html.P(
+                            [
+                                "This network graph shows authors and their direct coauthors. "
+                                "When an author is selected you are able to see the author's entire network graph. "
+                                "When you select two authors, you are able to see their combined network(s) and any "
+                                "shared connections they may have. Note that only full graphs for the selected authors "
+                                "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
+                                "entire network. To see their entire network, selected them from the dropdown. If they "
+                                "are not in the dropdown, then you can request to add them, although at this time only "
+                                "COP scholars are included. There are: ",
+                                html.Span(
+                                    f"{len(ipop_names)} IPOP ",
+                                    className="strong text-primary",
+                                ),
+                                "scholars/authors available to choose from.",
+                            ]
+                        ),
+                    ],
+                    width=9,
                 )
             ],
             justify="center",
@@ -221,14 +242,16 @@ tab2 = dbc.Container(
             [
                 dbc.Card(
                     dbc.Spinner(
-                        dcc.Graph(figure=ipop_network_graph, id='ipop-graph'),
+                        dcc.Graph(figure=ipop_network_graph, id="ipop-graph"),
                         type="grow",
                         color="primary",
                         size="lg",
                     ),
                     className="p-3 m-3",
                     body=True,
-                    style={'box-shadow': '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)'},
+                    style={
+                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+                    },
                 )
             ],
             className="px-5",
@@ -236,7 +259,7 @@ tab2 = dbc.Container(
             align="center",
         ),
     ],
-    fluid=True
+    fluid=True,
 )
 
 main_content = dbc.Card(
@@ -244,15 +267,15 @@ main_content = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="COP", tab_id="tab-1", tabClassName='ml-auto'),
-                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName='mr-auto'),
+                    dbc.Tab(label="COP", tab_id="tab-1", tabClassName="ml-auto"),
+                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mr-auto"),
                 ],
                 id="card-tabs",
                 card=True,
                 active_tab="tab-1",
             )
         ),
-        dbc.CardBody(id='main_content_body'),
+        dbc.CardBody(id="main_content_body"),
     ]
 )
 
@@ -264,18 +287,27 @@ app.layout = dbc.Container(
                     [
                         html.Img(
                             src="/assets/IPOP-logo.png",
-                            style={'width': '100px'},
+                            style={"width": "100px"},
                         )
                     ],
                     align="center",
                     width=2,
                 ),
-                dbc.Col([html.H1(children="UK COP Scholarship Network", className="text-info", style={'text-align': 'center'})], width=4),
+                dbc.Col(
+                    [
+                        html.H1(
+                            children="UK COP Scholarship Network",
+                            className="text-info",
+                            style={"text-align": "center"},
+                        )
+                    ],
+                    width=4,
+                ),
                 dbc.Col(
                     [
                         html.Img(
                             src="/assets/UK-COP-logo.jpg",
-                            style={'width': '250px', 'height': '200px'},
+                            style={"width": "250px", "height": "200px"},
                         )
                     ],
                     align="center",
@@ -285,8 +317,7 @@ app.layout = dbc.Container(
             justify="center",
             align="center",
         ),
-        main_content
-
+        main_content,
     ],
     fluid=True,
 )
