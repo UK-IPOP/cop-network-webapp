@@ -13,10 +13,12 @@ import scholar_network
 from app import graphing, utils
 
 
-# TODO: performance improvements
-
-
 def load_scholar_names_from_file() -> list[str]:
+    """Loads scholars from file.
+
+    Returns:
+        list[str]: A list of scholar names.
+    """
     with open("data/COPscholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
         authors = []
@@ -26,6 +28,11 @@ def load_scholar_names_from_file() -> list[str]:
 
 
 def load_ipop_scholar_names_from_file() -> list[str]:
+    """Loads, specifically, IPOP scholars from file.
+
+    Returns:
+        list[str]: List of IPOP scholar names.
+    """
     with open("data/IPOP-Scholars.csv", "r") as f:
         csvreader = csv.DictReader(f)
         authors = []
@@ -35,6 +42,14 @@ def load_ipop_scholar_names_from_file() -> list[str]:
 
 
 def create_cop_network_graph_figure():
+    """Creates entire network graph.
+
+    This function calls our utility and graphing functions
+    to generate the entire network once on page load.
+
+    Returns:
+        [go.Figure]: plotly figure representing drawn network.
+    """
     graph, positions = utils.load_graph_from_files()
     node_trace, edge_trace = graphing.build_network(graph, positions)
     fig = graphing.draw_network(node_trace, edge_trace, title="COP Network Graph")
@@ -42,13 +57,30 @@ def create_cop_network_graph_figure():
 
 
 def create_ipop_network_graph_figure():
+    """Creates entire network graph for IPOP scholars only.
+
+    This function calls our utility and graphing functions
+    to generate the entire network once on page load.
+
+    Returns:
+        [go.Figure]: plotly figure representing drawn network.
+    """
     graph, positions = utils.load_ipop_graph_from_files()
     node_trace, edge_trace = graphing.build_network(graph, positions)
     fig = graphing.draw_network(node_trace, edge_trace, title="IPOP Network Graph")
     return fig
 
 
-def pair_graph(author1, author2):
+def pair_graph(author1: str, author2: str) -> go.Figure:
+    """Draws a graph, given two scholars to filter the network on.
+
+    Args:
+        author1 (str): first scholar name to filter on
+        author2 (str): second scholar name to filter on
+
+    Returns:
+        go.Figure: drawn network graph
+    """
     graph = scholar_network.build_graph(author1, author2)
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
@@ -66,11 +98,22 @@ def pair_graph(author1, author2):
 
 
 def parse_name(name: str) -> str:
+    """Extracts first and last parts of a name.
+
+    This could be first and last name or any variation.
+
+    Args:
+        name (str): String name to be parsed
+
+    Returns:
+        str: Extracted 2-part name.
+    """
     parts = name.split()
     parsed = f"{parts[0]} {parts[-1]}"
     return parsed
 
 
+# dash globals
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
 app = dash.Dash(
     __name__,
@@ -81,6 +124,7 @@ server = app.server
 app.config["suppress_callback_exceptions"] = True
 
 
+# call these once here, in global state, at application startup, then reuse
 scholar_names = load_scholar_names_from_file()
 ipop_names = load_ipop_scholar_names_from_file()
 all_names = set(scholar_names) | set(ipop_names)
@@ -88,6 +132,7 @@ cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
 
+# tab for entire COP
 tab1 = dbc.Container(
     [
         dbc.Row(
@@ -173,6 +218,7 @@ tab1 = dbc.Container(
 )
 
 
+# tab for IPOP only
 tab2 = dbc.Container(
     [
         dbc.Row(
@@ -257,6 +303,7 @@ tab2 = dbc.Container(
     fluid=True,
 )
 
+# content for main card area
 main_content = dbc.Card(
     [
         dbc.CardHeader(
@@ -274,6 +321,7 @@ main_content = dbc.Card(
     ]
 )
 
+# layout for entire application
 app.layout = dbc.Container(
     [
         dbc.Row(
@@ -323,6 +371,7 @@ app.layout = dbc.Container(
     Input(component_id="author-dropdown1", component_property="value"),
 )
 def update_options1(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
         for person in sorted(scholar_names)
@@ -335,6 +384,7 @@ def update_options1(input_value: str) -> list[dict[str, str]]:
     Input(component_id="author-dropdown2", component_property="value"),
 )
 def update_options2(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
         for person in sorted(scholar_names)
@@ -347,6 +397,7 @@ def update_options2(input_value: str) -> list[dict[str, str]]:
     Input(component_id="author-dropdown3", component_property="value"),
 )
 def update_options3(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
         for person in sorted(ipop_names)
@@ -359,6 +410,7 @@ def update_options3(input_value: str) -> list[dict[str, str]]:
     Input(component_id="author-dropdown4", component_property="value"),
 )
 def update_options4(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
         for person in sorted(ipop_names)
@@ -374,6 +426,7 @@ def update_options4(input_value: str) -> list[dict[str, str]]:
     ],
 )
 def on_author_select(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
+    """Generate new visualization given author filters or load default."""
     if author1 or author2:
         return pair_graph(author1, author2)
     return cop_network_graph
@@ -387,6 +440,7 @@ def on_author_select(author1: Union[str, None], author2: Union[str, None]) -> go
     ],
 )
 def draw_ipop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
+    """Generate new visualization given author filters or load default."""
     if author1 or author2:
         return pair_graph(author1, author2)
     return ipop_network_graph
@@ -396,11 +450,13 @@ def draw_ipop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.
     Output("main_content_body", "children"), [Input("card-tabs", "active_tab")]
 )
 def tab_content(active_tab):
+    """Control tab navigation."""
     if active_tab == "tab-2":
         return tab2
     else:
         return tab1
 
 
+# run main application
 if __name__ == "__main__":
     app.run_server(debug=True)

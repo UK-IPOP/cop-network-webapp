@@ -10,8 +10,19 @@ def build_network(
     graph: nx.Graph,
     layout: nx.layout,
     focus1: Union[str, None] = None,
-    focus2: Union[str, None] = None
+    focus2: Union[str, None] = None,
 ) -> tuple[go.Scatter, go.Scatter]:
+    """Generates a network scatterplot's data structure.
+
+    Args:
+        graph (nx.Graph): networkx graph to be drawn
+        layout (nx.layout): layout in which to visualize the graph
+        focus1 (Union[str, None], optional): author to highlight. Defaults to None.
+        focus2 (Union[str, None], optional): author to highlight. Defaults to None.
+
+    Returns:
+        tuple[go.Scatter, go.Scatter]: Plotly Scatter graph object traces.
+    """
     edge_x = []
     edge_y = []
     for edge in graph.edges():
@@ -81,6 +92,16 @@ def build_network(
 def draw_network(
     node_trace: go.Scatter, edge_trace: go.Scatter, title: str
 ) -> go.Figure:
+    """Draws network.
+
+    Args:
+        node_trace (go.Scatter): traces for where to draw nodes (points).
+        edge_trace (go.Scatter): traces for where to draw edges (lines).
+        title (str): Title for the chart.
+
+    Returns:
+        go.Figure: plotly figure of drawn graph.
+    """
     fig = go.Figure(
         data=[edge_trace, node_trace],
         layout=go.Layout(
@@ -90,7 +111,15 @@ def draw_network(
             hovermode="closest",
             margin=dict(b=20, l=5, r=5, t=40),
             annotations=[
-                dict(showarrow=False, xref="paper", yref="paper", x=0.005, y=-0.002, text="** denotes focus of the network when filtered", font=dict(size=14))
+                dict(
+                    showarrow=False,
+                    xref="paper",
+                    yref="paper",
+                    x=0.005,
+                    y=-0.002,
+                    text="** denotes focus of the network when filtered",
+                    font=dict(size=14),
+                )
             ],
             xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
             yaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
