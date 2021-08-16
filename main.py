@@ -10,7 +10,11 @@ import csv
 import dash_bootstrap_components as dbc
 import scholar_network
 
-from app import graphing, utils
+from utils import graphing, utils
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 
 def load_scholar_names_from_file() -> list[str]:
@@ -459,4 +463,4 @@ def tab_content(active_tab):
 
 # run main application
 if __name__ == "__main__":
-    app.run_server(debug=True)
+    app.run_server(debug=os.getenv("DEBUG", False))
