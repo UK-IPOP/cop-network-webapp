@@ -75,32 +75,6 @@ def create_ipop_network_graph_figure():
     return fig
 
 
-def pair_graph(author1: str, author2: str) -> go.Figure:
-    """Draws a graph, given two scholars to filter the network on.
-
-    Args:
-        author1 (str): first scholar name to filter on
-        author2 (str): second scholar name to filter on
-
-    Returns:
-        go.Figure: drawn network graph
-    """
-    graph = scholar_network.build_graph(author1, author2)
-    # ! time consuming, re-looping over nodes
-    # ! also, try to just filter the pickled graph instead of recreating a new one
-    G = nx.Graph()
-    G.add_edges_from(graph.node_pairs())
-
-    positions = nx.spring_layout(G)
-    node_trace, edge_trace = graphing.build_network(G, positions, author1, author2)
-    fig = graphing.draw_network(
-        node_trace,
-        edge_trace,
-        title=f"{author1.title() if author1 else '...'} x {author2.title() if author2 else '...'} Network Graph",
-    )
-    return fig
-
-
 def parse_name(name: str) -> str:
     """Extracts first and last parts of a name.
 
@@ -115,6 +89,32 @@ def parse_name(name: str) -> str:
     parts = name.split()
     parsed = f"{parts[0]} {parts[-1]}"
     return parsed
+
+
+def pair_graph(author1: str, author2: str) -> go.Figure:
+    """Draws a graph, given two scholars to filter the network on.
+
+    Args:
+        author1 (str): first scholar name to filter on
+        author2 (str): second scholar name to filter on
+
+    Returns:
+        go.Figure: drawn network graph
+    """
+    graph = scholar_network.build_graph(author1, author2)
+    # ! time consuming, re-looping over nodes
+    # ! also, try to just filter the pickled graph instead of recreating a new one
+    G = nx.Graph()
+    G.add_edges_from([(parse_name(p[0]), parse_name(p[1])) for p in graph.node_pairs()])
+
+    positions = nx.spring_layout(G)
+    node_trace, edge_trace = graphing.build_network(G, positions, author1, author2)
+    fig = graphing.draw_network(
+        node_trace,
+        edge_trace,
+        title=f"{author1.title() if author1 else '...'} x {author2.title() if author2 else '...'} Network Graph",
+    )
+    return fig
 
 
 # dash globals
