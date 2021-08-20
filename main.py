@@ -87,11 +87,11 @@ def parse_name(name: str) -> str:
         str: Extracted 2-part name.
     """
     parts = name.split()
-    parsed = f"{parts[0]} {parts[-1]}"
+    parsed = f"{parts[0][0]} {parts[-1]}"
     return parsed
 
 
-def pair_graph(author1: str, author2: str) -> go.Figure:
+def pair_graph(name1: str, name2: str) -> go.Figure:
     """Draws a graph, given two scholars to filter the network on.
 
     Args:
@@ -101,18 +101,25 @@ def pair_graph(author1: str, author2: str) -> go.Figure:
     Returns:
         go.Figure: drawn network graph
     """
-    graph = scholar_network.build_graph(author1, author2)
+    a1 = parse_name(name1) if name1 else None
+    a2 = parse_name(name2) if name2 else None
+    graph = scholar_network.build_graph(a1, a2)
+    print(name1, "--0-", name2)
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
     G = nx.Graph()
-    G.add_edges_from([(parse_name(p[0]), parse_name(p[1])) for p in graph.node_pairs()])
+    print(name1, "--1-", name2)
+    G.add_edges_from(graph.node_pairs())
+    print(name1, "--2-", name2)
 
     positions = nx.spring_layout(G)
-    node_trace, edge_trace = graphing.build_network(G, positions, author1, author2)
+    print(name1, "--3-", name2)
+
+    node_trace, edge_trace = graphing.build_network(G, positions, a1, a2)
     fig = graphing.draw_network(
         node_trace,
         edge_trace,
-        title=f"{author1.title() if author1 else '...'} x {author2.title() if author2 else '...'} Network Graph",
+        title=f"{name1.title() if name1 else '...'} x {name2.title() if name2 else '...'} Network Graph",
     )
     return fig
 
@@ -209,7 +216,8 @@ tab1 = dbc.Container(
                     className="p-3 m-3",
                     body=True,
                     style={
-                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                        "background-color": "black",
                     },
                 )
             ],
@@ -295,7 +303,8 @@ tab2 = dbc.Container(
                     className="p-3 m-3",
                     body=True,
                     style={
-                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)"
+                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                        "background-color": "black",
                     },
                 )
             ],

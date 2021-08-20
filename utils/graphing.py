@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import networkx as nx
 
-pio.templates.default = "presentation"
+pio.templates.default = "plotly_dark"
 
 
 def build_network(
@@ -72,8 +72,7 @@ def build_network(
         hovertemplate="<b>%{hovertext}</b><br>%{customdata}<extra></extra>",
         marker=dict(
             showscale=True,
-            colorscale="PuBu",
-            reversescale=False,
+            colorscale="thermal",
             color=[],
             size=5,
             colorbar=dict(
