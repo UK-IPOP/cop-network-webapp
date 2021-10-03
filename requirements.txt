@@ -139,9 +139,9 @@ plotly==5.2.1; python_version >= "3.6" \
 python-dotenv==0.19.0; python_version >= "3.5" \
     --hash=sha256:f521bc2ac9a8e03c736f62911605c5d83970021e3fa95b37d769e2bbbe9b6172 \
     --hash=sha256:aae25dc1ebe97c420f50b81fb0e5c949659af713f31fdb63c749ca68748f34b1
-scholar-network==0.2.3; python_version >= "3.9" and python_version < "3.10" \
-    --hash=sha256:91352efb15af86e55e10d8f2839c9645d34c00570bd961af6997cc8ff7869798 \
-    --hash=sha256:52229e029697096fb524719bf51a3e07723c2832ab4ba5ba607ead625cef2104
+scholar-network==0.2.4; python_version >= "3.9" and python_version < "3.10" \
+    --hash=sha256:dc9bb5d1f128a4f350b0e07f482a2014cca4fdd16db917b35aa9dfc4278d37fa \
+    --hash=sha256:7b121aee8ebe9e627d1d326291aadfa616c93cbb71eaa09140a6bf9e8db3bcb8
 scipy==1.7.1; python_version >= "3.7" and python_version < "3.10" \
     --hash=sha256:2a0eeaab01258e0870c4022a6cd329aef3b7c6c2b606bd7cf7bb2ba9820ae561 \
     --hash=sha256:3f52470e0548cdb74fb8ddf06773ffdcca7c97550f903b1c51312ec19243a7f7 \
