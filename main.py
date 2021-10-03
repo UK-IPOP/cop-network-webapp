@@ -9,6 +9,7 @@ import networkx as nx
 import csv
 import dash_bootstrap_components as dbc
 import scholar_network
+import pickle
 
 from utils import graphing, utils
 from dotenv import load_dotenv
@@ -75,6 +76,24 @@ def create_ipop_network_graph_figure():
     return fig
 
 
+def create_poc_graph_figure():
+    """Creates entire network graph for IPOP scholars only.
+
+    This function calls our utility and graphing functions
+    to generate the entire network once on page load.
+
+    Returns:
+        [go.Figure]: plotly figure representing drawn network.
+    """
+    with open("data/poc_graph.pkl", "rb") as f:
+        graph = pickle.load(f)
+    with open("data/poc_pos.pkl", "rb") as f:
+        positions = pickle.load(f)
+    node_trace, edge_trace = graphing.build_network(graph, positions)
+    fig = graphing.draw_network(node_trace, edge_trace, title="POC Network Graph")
+    return fig
+
+
 def parse_name(name: str) -> str:
     """Extracts first and last parts of a name.
 
@@ -124,6 +143,39 @@ def pair_graph(name1: str, name2: str) -> go.Figure:
     return fig
 
 
+def pair_graph_poc(name1: str, name2: str) -> go.Figure:
+    """Draws a graph, given two scholars to filter the network on.
+
+    Args:
+        author1 (str): first scholar name to filter on
+        author2 (str): second scholar name to filter on
+
+    Returns:
+        go.Figure: drawn network graph
+    """
+    a1 = parse_name(name1) if name1 else None
+    a2 = parse_name(name2) if name2 else None
+    graph = scholar_network.build_graph(a1, a2, fpath="data/scraped_poc.json")
+    print(name1, "--0-", name2)
+    # ! time consuming, re-looping over nodes
+    # ! also, try to just filter the pickled graph instead of recreating a new one
+    G = nx.Graph()
+    print(name1, "--1-", name2)
+    G.add_edges_from(graph.node_pairs())
+    print(name1, "--2-", name2)
+
+    positions = nx.spring_layout(G)
+    print(name1, "--3-", name2)
+
+    node_trace, edge_trace = graphing.build_network(G, positions, a1, a2)
+    fig = graphing.draw_network(
+        node_trace,
+        edge_trace,
+        title=f"{name1.title() if name1 else '...'} x {name2.title() if name2 else '...'} Network Graph",
+    )
+    return fig
+
+
 # dash globals
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
 app = dash.Dash(
@@ -139,6 +191,15 @@ app.config["suppress_callback_exceptions"] = True
 scholar_names = load_scholar_names_from_file()
 ipop_names = load_ipop_scholar_names_from_file()
 all_names = set(scholar_names) | set(ipop_names)
+poc_names = [
+    "Chana Akins",
+    "William W. Stoops",
+    "Hilary Surratt",
+    "Chris Delcher",
+    "Christal Badour",
+    "Pavel Ortinski",
+]
+poc_graph = create_poc_graph_figure()
 cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
@@ -316,6 +377,92 @@ tab2 = dbc.Container(
     fluid=True,
 )
 
+# tab for POC only
+tab3 = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H2("Description:", className="text-center text-info"),
+                        html.Hr(),
+                        html.P(
+                            [
+                                "This network graph shows authors and their direct coauthors. "
+                                "When an author is selected you are able to see the author's entire network graph. "
+                                "When you select two authors, you are able to see their combined network(s) and any "
+                                "shared connections they may have. Note that only full graphs for the selected authors "
+                                "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
+                                "entire network. To see their entire network, selected them from the dropdown. If they "
+                                "are not in the dropdown, then you can request to add them, although at this time only "
+                                "COP scholars are included. There are: ",
+                                html.Span(
+                                    f"{len(poc_names)} Proof of Concept ",
+                                    className="strong text-primary",
+                                ),
+                                "scholars/authors available to choose from.",
+                            ]
+                        ),
+                    ],
+                    width=9,
+                )
+            ],
+            justify="center",
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Author 1 Select:", className="text-info"),
+                        dcc.Dropdown(
+                            id="author-dropdown5",
+                            options=[],
+                            value="",
+                        ),
+                    ],
+                    width=4,
+                ),
+                dbc.Col(
+                    [
+                        html.Label("Author 2 Select:", className="text-info"),
+                        dcc.Dropdown(
+                            id="author-dropdown6",
+                            options=[],
+                            value="",
+                        ),
+                    ],
+                    width=4,
+                ),
+            ],
+            justify="center",
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Card(
+                    dbc.Spinner(
+                        dcc.Graph(figure=poc_graph, id="poc-graph"),
+                        type="grow",
+                        color="primary",
+                        size="lg",
+                    ),
+                    className="p-3 m-3",
+                    body=True,
+                    style={
+                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
+                        "background-color": "black",
+                    },
+                )
+            ],
+            className="px-5",
+            justify="center",
+            align="center",
+        ),
+    ],
+    fluid=True,
+)
+
 # content for main card area
 main_content = dbc.Card(
     [
@@ -323,7 +470,8 @@ main_content = dbc.Card(
             dbc.Tabs(
                 [
                     dbc.Tab(label="COP", tab_id="tab-1", tabClassName="ml-auto"),
-                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mr-auto"),
+                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mx-auto"),
+                    dbc.Tab(label="POC", tab_id="tab-3", tabClassName="mr-auto"),
                 ],
                 id="card-tabs",
                 card=True,
@@ -432,13 +580,39 @@ def update_options4(input_value: str) -> list[dict[str, str]]:
 
 
 @app.callback(
+    Output(component_id="author-dropdown6", component_property="options"),
+    Input(component_id="author-dropdown5", component_property="value"),
+)
+def update_options5(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
+    return [
+        {"label": person, "value": person}
+        for person in sorted(poc_names)
+        if person != input_value
+    ]
+
+
+@app.callback(
+    Output(component_id="author-dropdown5", component_property="options"),
+    Input(component_id="author-dropdown6", component_property="value"),
+)
+def update_options6(input_value: str) -> list[dict[str, str]]:
+    """Dynamically adjust dropdown options to not include selected."""
+    return [
+        {"label": person, "value": person}
+        for person in sorted(poc_names)
+        if person != input_value
+    ]
+
+
+@app.callback(
     Output("network-graph", "figure"),
     [
         Input(component_id="author-dropdown1", component_property="value"),
         Input(component_id="author-dropdown2", component_property="value"),
     ],
 )
-def on_author_select(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
+def draw_cop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
     """Generate new visualization given author filters or load default."""
     if author1 or author2:
         return pair_graph(author1, author2)
@@ -460,12 +634,30 @@ def draw_ipop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.
 
 
 @app.callback(
+    Output("poc-graph", "figure"),
+    [
+        Input(component_id="author-dropdown5", component_property="value"),
+        Input(component_id="author-dropdown6", component_property="value"),
+    ],
+)
+def on_poc_author_select(
+    author1: Union[str, None], author2: Union[str, None]
+) -> go.Figure:
+    """Generate new visualization given author filters or load default."""
+    if author1 or author2:
+        return pair_graph_poc(author1, author2)
+    return poc_graph
+
+
+@app.callback(
     Output("main_content_body", "children"), [Input("card-tabs", "active_tab")]
 )
 def tab_content(active_tab):
     """Control tab navigation."""
     if active_tab == "tab-2":
         return tab2
+    elif active_tab == "tab-3":
+        return tab3
     else:
         return tab1
 
