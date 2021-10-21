@@ -77,7 +77,7 @@ def create_ipop_network_graph_figure():
 
 
 def create_poc_graph_figure():
-    """Creates entire network graph for IPOP scholars only.
+    """Creates entire network graph for POC scholars only.
 
     This function calls our utility and graphing functions
     to generate the entire network once on page load.
@@ -397,7 +397,7 @@ tab3 = dbc.Container(
                                 "are not in the dropdown, then you can request to add them, although at this time only "
                                 "COP scholars are included. There are: ",
                                 html.Span(
-                                    f"{len(poc_names)} Proof of Concept ",
+                                    f"{len(poc_names)} SURE ",
                                     className="strong text-primary",
                                 ),
                                 "scholars/authors available to choose from.",
@@ -471,7 +471,7 @@ main_content = dbc.Card(
                 [
                     dbc.Tab(label="COP", tab_id="tab-1", tabClassName="ml-auto"),
                     dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mx-auto"),
-                    dbc.Tab(label="POC", tab_id="tab-3", tabClassName="mr-auto"),
+                    dbc.Tab(label="SURE", tab_id="tab-3", tabClassName="mr-auto"),
                 ],
                 id="card-tabs",
                 card=True,
@@ -640,9 +640,7 @@ def draw_ipop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.
         Input(component_id="author-dropdown6", component_property="value"),
     ],
 )
-def on_poc_author_select(
-    author1: Union[str, None], author2: Union[str, None]
-) -> go.Figure:
+def draw_poc_graph(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
     """Generate new visualization given author filters or load default."""
     if author1 or author2:
         return pair_graph_poc(author1, author2)
