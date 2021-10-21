@@ -90,7 +90,7 @@ def create_poc_graph_figure():
     with open("data/poc_pos.pkl", "rb") as f:
         positions = pickle.load(f)
     node_trace, edge_trace = graphing.build_network(graph, positions)
-    fig = graphing.draw_network(node_trace, edge_trace, title="POC Network Graph")
+    fig = graphing.draw_network(node_trace, edge_trace, title="SURE Network Graph")
     return fig
 
 
