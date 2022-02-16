@@ -46,6 +46,22 @@ def load_ipop_scholar_names_from_file() -> list[str]:
         return authors
 
 
+def load_sure_scholar_names_from_file() -> list[str]:
+    """Loads, specifically, SURE scholars from file.
+
+    Returns:
+        list[str]: List of SURE scholar names.
+    """
+    with open("data/SUREscholars.csv", "r") as f:
+        csvreader = csv.DictReader(f)
+        authors = []
+        for row in csvreader:
+            authors.append(
+                row.get("First", "").strip() + " " + row.get("Last", "").strip()
+            )
+        return authors
+
+
 def create_cop_network_graph_figure():
     """Creates entire network graph.
 
@@ -76,7 +92,7 @@ def create_ipop_network_graph_figure():
     return fig
 
 
-def create_poc_graph_figure():
+def create_sure_graph_figure():
     """Creates entire network graph for POC scholars only.
 
     This function calls our utility and graphing functions
@@ -85,9 +101,9 @@ def create_poc_graph_figure():
     Returns:
         [go.Figure]: plotly figure representing drawn network.
     """
-    with open("data/poc_graph.pkl", "rb") as f:
+    with open("data/sure-graph.pkl", "rb") as f:
         graph = pickle.load(f)
-    with open("data/poc_pos.pkl", "rb") as f:
+    with open("data/sure-pos.pkl", "rb") as f:
         positions = pickle.load(f)
     node_trace, edge_trace = graphing.build_network(graph, positions)
     fig = graphing.draw_network(node_trace, edge_trace, title="SURE Network Graph")
@@ -143,7 +159,7 @@ def pair_graph(name1: str, name2: str) -> go.Figure:
     return fig
 
 
-def pair_graph_poc(name1: str, name2: str) -> go.Figure:
+def pair_graph_sure(name1: str, name2: str) -> go.Figure:
     """Draws a graph, given two scholars to filter the network on.
 
     Args:
@@ -155,7 +171,7 @@ def pair_graph_poc(name1: str, name2: str) -> go.Figure:
     """
     a1 = parse_name(name1) if name1 else None
     a2 = parse_name(name2) if name2 else None
-    graph = scholar_network.build_graph(a1, a2, fpath="data/scraped_poc.json")
+    graph = scholar_network.build_graph(a1, a2, fpath="data/scraped_sure.json")
     print(name1, "--0-", name2)
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
@@ -191,15 +207,9 @@ app.config["suppress_callback_exceptions"] = True
 scholar_names = load_scholar_names_from_file()
 ipop_names = load_ipop_scholar_names_from_file()
 all_names = set(scholar_names) | set(ipop_names)
-poc_names = [
-    "Chana Akins",
-    "William W. Stoops",
-    "Hilary Surratt",
-    "Chris Delcher",
-    "Christal Badour",
-    "Pavel Ortinski",
-]
-poc_graph = create_poc_graph_figure()
+sure_names = load_sure_scholar_names_from_file()
+
+sure_graph = create_sure_graph_figure()
 cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
@@ -377,7 +387,7 @@ tab2 = dbc.Container(
     fluid=True,
 )
 
-# tab for POC only
+# tab for SURE conference only
 tab3 = dbc.Container(
     [
         dbc.Row(
@@ -397,7 +407,7 @@ tab3 = dbc.Container(
                                 "are not in the dropdown, then you can request to add them, although at this time only "
                                 "COP scholars are included. There are: ",
                                 html.Span(
-                                    f"{len(poc_names)} SURE ",
+                                    f"{len(sure_names)} SURE ",
                                     className="strong text-primary",
                                 ),
                                 "scholars/authors available to choose from.",
@@ -442,7 +452,7 @@ tab3 = dbc.Container(
             [
                 dbc.Card(
                     dbc.Spinner(
-                        dcc.Graph(figure=poc_graph, id="poc-graph"),
+                        dcc.Graph(figure=sure_graph, id="poc-graph"),
                         type="grow",
                         color="primary",
                         size="lg",
@@ -643,8 +653,8 @@ def draw_ipop_graph(author1: Union[str, None], author2: Union[str, None]) -> go.
 def draw_poc_graph(author1: Union[str, None], author2: Union[str, None]) -> go.Figure:
     """Generate new visualization given author filters or load default."""
     if author1 or author2:
-        return pair_graph_poc(author1, author2)
-    return poc_graph
+        return pair_graph_sure(author1, author2)
+    return sure_graph
 
 
 @app.callback(
