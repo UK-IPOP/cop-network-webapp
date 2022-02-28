@@ -122,7 +122,7 @@ def parse_name(name: str) -> str:
         str: Extracted 2-part name.
     """
     parts = name.split()
-    parsed = f"{parts[0][0]} {parts[-1]}"
+    parsed = f"{parts[0][0]} {parts[-1]}".upper()
     return parsed
 
 
@@ -189,6 +189,7 @@ def pair_graph_sure(name1: str, name2: str) -> go.Figure:
         edge_trace,
         title=f"{name1.title() if name1 else '...'} x {name2.title() if name2 else '...'} Network Graph",
     )
+    print(name1, "--4-", name2)
     return fig
 
 
