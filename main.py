@@ -597,7 +597,7 @@ def update_options5(input_value: str) -> list[dict[str, str]]:
     """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
-        for person in sorted(poc_names)
+        for person in sorted(sure_names)
         if person != input_value
     ]
 
@@ -610,7 +610,7 @@ def update_options6(input_value: str) -> list[dict[str, str]]:
     """Dynamically adjust dropdown options to not include selected."""
     return [
         {"label": person, "value": person}
-        for person in sorted(poc_names)
+        for person in sorted(sure_names)
         if person != input_value
     ]
 
