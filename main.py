@@ -471,13 +471,13 @@ main_content = dbc.Card(
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="COP", tab_id="tab-1", tabClassName="ml-auto"),
-                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mx-auto"),
-                    dbc.Tab(label="SURE", tab_id="tab-3", tabClassName="mr-auto"),
+                    dbc.Tab(label="SURE", tab_id="tab-3", tabClassName="ml-auto"),
+                    dbc.Tab(label="COP", tab_id="tab-1", tabClassName="mx-auto"),
+                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mr-auto"),
                 ],
                 id="card-tabs",
                 card=True,
-                active_tab="tab-1",
+                active_tab="tab-3",
             )
         ),
         dbc.CardBody(id="main_content_body"),
