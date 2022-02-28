@@ -58,8 +58,15 @@ def build_network(
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(graph.adjacency()):
+        print(adjacencies[0], "--", focus1, "--", focus2)
         n_info = len(adjacencies[1])
-        node_adjacencies.append(n_info)
+        if (
+            adjacencies[0] == str(focus1).upper()
+            or adjacencies[0] == str(focus2).upper()
+        ):
+            node_adjacencies.append("#ff0000")
+        else:
+            node_adjacencies.append("#000000")
         node_text.append(f"# of connections: {str(n_info)}")
 
     node_trace = go.Scatter(
@@ -70,19 +77,6 @@ def build_network(
         hovertext=node_name,
         customdata=node_text,
         hovertemplate="<b>%{hovertext}</b><br>%{customdata}<extra></extra>",
-        marker=dict(
-            showscale=True,
-            colorscale="thermal",
-            color=[],
-            size=5,
-            colorbar=dict(
-                thickness=20,
-                title="Co-authors",
-                xanchor="left",
-                titleside="top",
-            ),
-            line_width=0.5,
-        ),
     )
     node_trace.marker.color = node_adjacencies
     return node_trace, edge_trace
