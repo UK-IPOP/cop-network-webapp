@@ -122,7 +122,7 @@ def parse_name(name: str) -> str:
         str: Extracted 2-part name.
     """
     parts = name.split()
-    parsed = f"{parts[0][0]} {parts[-1]}".upper()
+    parsed = f"{parts[0][0]} {parts[-1]}".title()
     return parsed
 
 
@@ -172,16 +172,16 @@ def pair_graph_sure(name1: str, name2: str) -> go.Figure:
     a1 = parse_name(name1) if name1 else None
     a2 = parse_name(name2) if name2 else None
     graph = scholar_network.build_graph(a1, a2, fpath="data/scraped_sure.json")
-    print(name1, "--0-", name2)
+    print(a1, "--0-", a2)
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
     G = nx.Graph()
-    print(name1, "--1-", name2)
+    print(a1, "--1-", a2)
     G.add_edges_from(graph.node_pairs())
-    print(name1, "--2-", name2)
+    print(a1, "--2-", a2)
 
     positions = nx.spring_layout(G)
-    print(name1, "--3-", name2)
+    print(a1, "--3-", a2)
 
     node_trace, edge_trace = graphing.build_network(G, positions, a1, a2)
     fig = graphing.draw_network(
@@ -189,7 +189,7 @@ def pair_graph_sure(name1: str, name2: str) -> go.Figure:
         edge_trace,
         title=f"{name1.title() if name1 else '...'} x {name2.title() if name2 else '...'} Network Graph",
     )
-    print(name1, "--4-", name2)
+    print(a1, "--4-", a2)
     return fig
 
 
