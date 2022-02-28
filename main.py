@@ -403,7 +403,7 @@ tab3 = dbc.Container(
                             [
                                 "There are: ",
                                 html.Span(
-                                    f"{len(ipop_names)} SURE ",
+                                    f"{len(sure_names)} SURE ",
                                     className="strong text-primary",
                                 ),
                                 "scholars/authors available to choose from.",
