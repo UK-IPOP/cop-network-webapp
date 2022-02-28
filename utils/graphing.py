@@ -58,11 +58,10 @@ def build_network(
     node_adjacencies = []
     node_text = []
     for node, adjacencies in enumerate(graph.adjacency()):
-        print(adjacencies[0], "--", focus1, "--", focus2)
         n_info = len(adjacencies[1])
         if (
-            adjacencies[0] == str(focus1).upper()
-            or adjacencies[0] == str(focus2).upper()
+            adjacencies[0] == str(focus1).title()
+            or adjacencies[0] == str(focus2).title()
         ):
             node_adjacencies.append("#ff0000")
         else:
