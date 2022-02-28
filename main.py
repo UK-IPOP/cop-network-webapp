@@ -123,6 +123,8 @@ def parse_name(name: str) -> str:
     """
     parts = name.split()
     parsed = f"{parts[0][0]} {parts[-1]}".title()
+    if parsed == "J Mcginty":
+        return "J McGinty"
     return parsed
 
 
@@ -287,10 +289,6 @@ tab1 = dbc.Container(
                     ),
                     className="p-3 m-3",
                     body=True,
-                    style={
-                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                        "background-color": "black",
-                    },
                 )
             ],
             className="px-5",
@@ -374,10 +372,6 @@ tab2 = dbc.Container(
                     ),
                     className="p-3 m-3",
                     body=True,
-                    style={
-                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                        "background-color": "black",
-                    },
                 )
             ],
             className="px-5",
@@ -460,10 +454,6 @@ tab3 = dbc.Container(
                     ),
                     className="p-3 m-3",
                     body=True,
-                    style={
-                        "box-shadow": "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)",
-                        "background-color": "black",
-                    },
                 )
             ],
             className="px-5",

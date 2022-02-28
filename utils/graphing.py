@@ -3,7 +3,7 @@ import plotly.graph_objects as go
 import plotly.io as pio
 import networkx as nx
 
-pio.templates.default = "plotly_dark"
+pio.templates.default = "plotly_white"
 
 
 def build_network(
