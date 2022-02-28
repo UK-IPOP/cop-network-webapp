@@ -389,20 +389,21 @@ tab3 = dbc.Container(
             [
                 dbc.Col(
                     [
-                        html.H2("Description:", className="text-center text-info"),
-                        html.Hr(),
+                        html.Img(
+                            src="/assets/sure_logo.PNG",
+                            style={
+                                "display": "block",
+                                "margin-left": "auto",
+                                "margin-right": "auto",
+                                "width": "30%",
+                            },
+                            className="text-center",
+                        ),
                         html.P(
                             [
-                                "This network graph shows authors and their direct coauthors. "
-                                "When an author is selected you are able to see the author's entire network graph. "
-                                "When you select two authors, you are able to see their combined network(s) and any "
-                                "shared connections they may have. Note that only full graphs for the selected authors "
-                                "are shown, and any other authors are only showcasing a sub-graph or sub-network of their "
-                                "entire network. To see their entire network, selected them from the dropdown. If they "
-                                "are not in the dropdown, then you can request to add them, although at this time only "
-                                "COP scholars are included. There are: ",
+                                "There are: ",
                                 html.Span(
-                                    f"{len(sure_names)} SURE ",
+                                    f"{len(ipop_names)} SURE ",
                                     className="strong text-primary",
                                 ),
                                 "scholars/authors available to choose from.",
