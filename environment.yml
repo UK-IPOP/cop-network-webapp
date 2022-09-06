@@ -1,0 +1,16 @@
+name: my_app #Environment name
+dependencies:
+  - python=3.9
+  - pip:
+      - dash
+      - dash
+      - dash-core-components
+      - dash-html-components
+      - dash-bootstrap-components
+      - plotly
+      - gunicorn # for app deployment
+      - scipy
+      - networkx
+      - pandas
+      - python-dotenv
+      - scholar-network
