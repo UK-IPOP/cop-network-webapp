@@ -1,12 +1,14 @@
 from typing import Union
 
 import dash
-import dash_core_components as dcc
-import dash_html_components as html
+from dash import dcc
+from dash import html
 import plotly.graph_objects as go
 from dash.dependencies import Input, Output
 import networkx as nx
 import csv
+import pandas as pd
+from dash import dash_table
 import dash_bootstrap_components as dbc
 import scholar_network
 import pickle
@@ -142,6 +144,7 @@ def pair_graph(name1: str, name2: str) -> go.Figure:
     a2 = parse_name(name2) if name2 else None
     graph = scholar_network.build_graph(a1, a2)
     print(name1, "--0-", name2)
+    print(graph.node_pairs())
     # ! time consuming, re-looping over nodes
     # ! also, try to just filter the pickled graph instead of recreating a new one
     G = nx.Graph()
@@ -195,6 +198,22 @@ def pair_graph_sure(name1: str, name2: str) -> go.Figure:
     return fig
 
 
+def make_datatable(df: pd.DataFrame) -> dash_table.DataTable:
+    """Creates a datatable of all scholars."""
+    table = dash_table.DataTable(
+        id="datatable",
+        columns=[{"name": i, "id": i} for i in df.columns],
+        data=df.to_dict("records"),
+        style_cell={"textAlign": "left"},
+        style_header={"backgroundColor": "rgb(3, 60, 115)", "color": "white"},
+        filter_action="native",
+        sort_action="native",
+        sort_mode="single",
+        page_size=20,
+    )
+    return table
+
+
 # dash globals
 theme = "https://stackpath.bootstrapcdn.com/bootswatch/4.5.2/sketchy/bootstrap.min.css"
 app = dash.Dash(
@@ -216,6 +235,9 @@ sure_graph = create_sure_graph_figure()
 cop_network_graph = create_cop_network_graph_figure()
 ipop_network_graph = create_ipop_network_graph_figure()
 
+
+counts_df = pd.read_csv("data/coauthor_counts.csv")
+table = make_datatable(counts_df)
 
 # tab for entire COP
 tab1 = dbc.Container(
@@ -465,19 +487,79 @@ tab3 = dbc.Container(
     fluid=True,
 )
 
+
+# tabe 4 for datatabel
+tab4 = dbc.Container(
+    [
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.H2("Description:", className="text-center text-info"),
+                        html.Hr(),
+                        html.P(
+                            [
+                                "This page showcases authors and their co-authors. "
+                                "Use the dropdown to select an author and see their co-author specifically. "
+                            ]
+                        ),
+                    ],
+                    width=9,
+                )
+            ],
+            justify="center",
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        html.Label("Author Select:", className="text-info"),
+                        dcc.Dropdown(
+                            id="author-dropdown4",
+                            options=[
+                                {"label": person, "value": person}
+                                for person in sorted(scholar_names)
+                            ],
+                            value="",
+                        ),
+                    ],
+                    width=6,
+                ),
+            ],
+            justify="center",
+            align="center",
+        ),
+        dbc.Row(
+            [
+                dbc.Card(
+                    children=table,
+                    className="p-3 m-3",
+                    id="table-card",
+                    body=True,
+                )
+            ],
+            className="px-5",
+            justify="center",
+            align="center",
+        ),
+    ],
+    fluid=True,
+)
+
 # content for main card area
 main_content = dbc.Card(
     [
         dbc.CardHeader(
             dbc.Tabs(
                 [
-                    dbc.Tab(label="SURE", tab_id="tab-3", tabClassName="ml-auto"),
                     dbc.Tab(label="COP", tab_id="tab-1", tabClassName="mx-auto"),
-                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mr-auto"),
+                    dbc.Tab(label="IPOP", tab_id="tab-2", tabClassName="mx-auto"),
+                    dbc.Tab(label="SURE", tab_id="tab-3", tabClassName="mx-auto"),
+                    dbc.Tab(label="Data Table", tab_id="tab-4", tabClassName="mx-auto"),
                 ],
                 id="card-tabs",
-                card=True,
-                active_tab="tab-3",
+                active_tab="tab-1",
             )
         ),
         dbc.CardBody(id="main_content_body"),
@@ -527,6 +609,19 @@ app.layout = dbc.Container(
     ],
     fluid=True,
 )
+
+
+@app.callback(
+    Output(component_id="table-card", component_property="children"),
+    Input(component_id="author-dropdown4", component_property="value"),
+)
+def update_options_table(input_value: str) -> dash_table.DataTable:
+    """Dynamically adjust datatable to selected author."""
+    if input_value:
+        first, last = input_value.split(" ")
+        return make_datatable(counts_df[counts_df["Author 1"] == f"{first[0]} {last}"])
+
+    return make_datatable(df=counts_df)
 
 
 @app.callback(
@@ -658,6 +753,8 @@ def tab_content(active_tab):
         return tab2
     elif active_tab == "tab-3":
         return tab3
+    elif active_tab == "tab-4":
+        return tab4
     else:
         return tab1
 
