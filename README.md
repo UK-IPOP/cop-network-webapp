@@ -22,3 +22,4 @@ Currently, if you wish to add either yourself or a colleague to the network you 
   for easy identification
 - Add more authors to the network
 - Ability to add new authors to network directly from the site
+
