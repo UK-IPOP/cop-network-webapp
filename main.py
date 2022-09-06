@@ -499,7 +499,7 @@ tab4 = dbc.Container(
                         html.Hr(),
                         html.P(
                             [
-                                "This page showcases authors and their co-authors. "
+                                "This page showcases UK COP authors and their co-authors. "
                                 "Use the dropdown to select an author and see their co-author specifically. "
                             ]
                         ),
