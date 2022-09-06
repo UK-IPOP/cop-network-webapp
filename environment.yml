@@ -1,6 +1,6 @@
 name: my_app #Environment name
 dependencies:
-  - python=3.9
+  - python=3.9.13
   - pip:
       - dash
       - dash
